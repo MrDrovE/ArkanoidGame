@@ -93,15 +93,14 @@ class Player extends Car{
     moveLoop() {  
         if (this.keyPresses.KeyA) {
             this.moveCharacter(-this.speed, 0);
-            
-        } else if (this.keyPresses.KeyD) {
+        } 
+        if (this.keyPresses.KeyD) {
             this.moveCharacter(this.speed, 0);
         }
-
         if (this.keyPresses.KeyW) {
-            this.moveCharacter(0, -this.speed);
-            
-        } else if (this.keyPresses.KeyS) {
+            this.moveCharacter(0, -this.speed);            
+        } 
+        if (this.keyPresses.KeyS) {
             this.moveCharacter(0, this.speed);
         }
         if (this.keyShoot){
@@ -200,6 +199,7 @@ let roads = [new  Road("images/road.png", 0),new  Road("images/road.png", canvas
 function Start() {
 	window.removeEventListener("click", Start); //удаление нажатий с клавиатуры 
     timer = setInterval(Update, 1000 / 60); //Состояние игры будет обновляться 60 раз в секунду — при такой частоте обновление происходящего будет казаться очень плавным
+    playSound(startSound)
 }
 
 function Stop() {
