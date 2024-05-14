@@ -10,7 +10,7 @@
         this.scale = scale;
     }
  
-    Update(){
+    update(){
         this.y += this.speed;
 		
 		if(this.y > canvas.height + 50)
@@ -20,7 +20,7 @@
 		
     }
 
-    Move(v, d) {
+    move(v, d) {
         if(v == "x") //Перемещение по оси X
         {
             this.x += d; //Смещение
@@ -46,7 +46,7 @@
         }
     }
 
-    Collide(car){
+    collide(car){
         var hit = false;
         var obj; // по кому попала
         try{
@@ -71,7 +71,7 @@ class Bulet extends Car{
         this.borntime = borntime;
     }
 
-    Update() {
+    update() {
         this.y -= this.speed;
         if (this.y < -50) {
             this.dead = true;
@@ -105,7 +105,7 @@ class Player extends Car{
             this.moveCharacter(0, this.speed);
         }
         if (this.keyShoot){
-            this.Shoot()
+            this.shoot()
         }
 
     }// moveLoop
@@ -119,7 +119,7 @@ class Player extends Car{
         }
     }
 
-    Shoot(){
+    shoot(){
         if (time - lastshoot < 30){
             return 
         } 
@@ -139,7 +139,7 @@ class Road
         this.image.src = image;
     }
  
-    Update(road) {
+    update(road) {
         this.y += speed; //При обновлении изображение смещается вниз
  
         if(this.y > window.innerHeight) //Если изображение ушло за край холста, то меняем положение
@@ -213,8 +213,8 @@ function Stop() {
  
 function Update() {
 	time += 1
-	roads[0].Update(roads[1]);
-    roads[1].Update(roads[0]);
+	roads[0].update(roads[1]);
+    roads[1].update(roads[0]);
 	player.moveLoop();
 
 	if(RandomInteger(0, 10000) > 9800) { //создание новых кораблей
@@ -224,15 +224,15 @@ function Update() {
     if(RandomInteger(0, 10000) > 9990) { //создание новых кораблей
 		objects.push(new Civilian("images/civilian.png", RandomInteger(30, canvas.width - 50), RandomInteger(250, 400) * -1,"civilian",speed + 0.5,scale));
 	}
-    objects.forEach(obj => obj.Update());
-    bullets.forEach(bullet => bullet.Update());
+    objects.forEach(obj => obj.update());
+    bullets.forEach(bullet => bullet.update());
 
 
     objects = objects.filter(n => !n.dead);
     bullets = bullets.filter(n => !n.dead);
 	
     objects.forEach(obj => {
-        const collision = player.Collide(obj);
+        const collision = player.collide(obj);
         if (collision.hit) {
             if (collision.obj === "enemy"){
                 Stop();
@@ -249,7 +249,7 @@ function Update() {
             if (time - bullet.borntime > 180 ){
                 bullet.dead = true
             }
-            const bulletCollision = bullet.Collide(obj);
+            const bulletCollision = bullet.collide(obj);
             if (bulletCollision.hit) {
                 if (bulletCollision.obj == "enemy"){
                     startExplosion(obj);
@@ -391,24 +391,24 @@ function playSound(sound) {
 }
 
 function drawScore() {
-    ctx.font = "36px Arial";
+    ctx.font = "36px Keleti";
     ctx.fillStyle = "#0095DD";
     ctx.fillText("Спасенно: " + score, 8, 40);
 }
 
 function drawStreak() {
-    ctx.font = "36px Arial";
+    ctx.font = "36px Keleti";
     ctx.fillStyle = "#0095DD";
     ctx.fillText("Сбито: " + streak, 8, 80);
 }
 function Draw0() //Кнопка старт
 {
-	Draw();
+	//Draw();
 	
 	let start = new Image();
     start.src = "images/start.png";
     start.onload = function() {
-        ctx.drawImage(start, canvas.width/3, canvas.height/5);
+        ctx.drawImage(start, canvas.width*0.2, canvas.height*0.2,canvas.width*0.6,canvas.height*0.6);
         drawScore()
         drawStreak()
 	}
