@@ -1,4 +1,4 @@
-﻿class Car {
+﻿class GameObject {
     constructor(image, x, y,name,speed,scale){
         this.dead = false;
         this.x = x;
@@ -65,7 +65,7 @@
     }
 }
 
-class Bulet extends Car{
+class Bulet extends GameObject {
     constructor(image, x, y,name,speed,borntime,scale){
         super(image, x, y, name, speed, scale);
         this.borntime = borntime;
@@ -79,11 +79,11 @@ class Bulet extends Car{
     }
 }
 
-class Enemy extends Car{}
+class Enemy extends GameObject {}
 
-class Civilian extends Car{}
+class Civilian extends GameObject {}
 
-class Player extends Car{
+class Player extends GameObject {
     constructor(image, x, y,name,speed,scale){
         super(image, x, y, name, speed, scale);
         this.keyPresses = {};
@@ -123,14 +123,13 @@ class Player extends Car{
             return 
         } 
         lastshoot = time
-        bullets.push(new Bulet("images/shoot.png", this.x + 17, this.y-55, "bullet",speed+10,time,2.65))
+        bullets.push(new Bulet("images/shoot.png", this.x + 17, this.y-55, "bullet",speed+10,time,2.15))
         playSound(shootSound);
     }
     
 }
 
-class Road
-{
+class Road {
     constructor(image, y) {
         this.x = 0;
         this.y = y;
@@ -312,7 +311,6 @@ function keyDownListener(event) {
             player.keyShoot = true;
             break;
     }
-    
 }
 
 function keyUpListener(event){
@@ -409,10 +407,7 @@ function Draw0() //Кнопка старт
     start.src = "images/start.png";
     start.onload = function() {
         ctx.drawImage(start, canvas.width*0.2, canvas.height*0.2,canvas.width*0.6,canvas.height*0.6);
-        drawScore()
-        drawStreak()
 	}
-	
 }
 
 
@@ -436,6 +431,6 @@ window.onload = Draw0;
 // сделать остновки  NO
 // мб сделать магазинчик NO
 // // таблица рекордов со сременем жизни NO
-// добавить звуки NO
+// добавить звуки YES
 // меню NO 
 // после смерти менюшка NO 
