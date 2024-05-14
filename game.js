@@ -1,15 +1,13 @@
-﻿//  обработка столкновений (взрыв на той же канве)
-class Car
-{
+﻿class Car {
     constructor(image, x, y,name,speed,scale){
-		this.dead = false;
+        this.dead = false;
         this.x = x;
         this.y = y;
         this.image = new Image();
         this.image.src = image;
-        this.name = name
-        this.speed = speed
-        this.scle = scale
+        this.name = name;
+        this.speed = speed;
+        this.scale = scale;
     }
  
     Update(){
@@ -22,20 +20,15 @@ class Car
 		
     }
 
-    Move(v, d) 
-    {
+    Move(v, d) {
         if(v == "x") //Перемещение по оси X
         {
             this.x += d; //Смещение
- 
             //Если при смещении объект выходит за края холста, то изменения откатываются
-            if(this.x + this.image.width * scale > canvas.width)
-            {
+            if(this.x + this.image.width * this.scale > canvas.width) {
                 this.x -= d; 
             }
-    
-            if(this.x < 0)
-            {
+            if(this.x < 0) {
                 this.x = 0;
             }
         }
@@ -43,97 +36,58 @@ class Car
         {
             this.y += d;
  
-            if(this.y + this.image.height * scale > canvas.height)
-            {
+            if(this.y + this.image.height * this.scale > canvas.height) {
                 this.y -= d;
             }
  
-            if(this.y < 0)
-            {
+            if(this.y < 0) {
                 this.y = 0;
             }
         }
-        
     }
 
     Collide(car){
         var hit = false;
         var obj; // по кому попала
         try{
-            if(this.y < car.y + car.image.height * scale && this.y + this.image.height * scale > car.y) //Если объекты находятся на одной линии по горизонтали
+            if(this.y < car.y + car.image.height * car.scale && this.y + this.image.height * this.scale > car.y) //Если объекты находятся на одной линии по горизонтали
             {
-                if(this.x < car.x + car.image.width * scale && this.x + this.image.width * scale > car.x ) //Если объекты находятся на одной линии по вертикали
+                if(this.x < car.x + car.image.width * car.scale && this.x + this.image.width * this.scale > car.x ) //Если объекты находятся на одной линии по вертикали
                 {
                     hit = true
                     obj = car.name
                 }
             }
-        return {"hit":hit,"obj":obj};
+        return { hit,obj };
         } catch(e){
-            console.log(car)
-            console.log(objects)
-            console.log(e)
+            console.error(car, objects, e);
         }
     }
 }
 
 class Bulet extends Car{
     constructor(image, x, y,name,speed,borntime,scale){
-		super()
-        this.dead = false;
-        this.x = x;
-        this.y = y;
-        this.image = new Image();
-        this.image.src = image;
-        this.name = name
-        this.speed = speed
-        this.borntime = borntime
-        this.scale = scale
+        super(image, x, y, name, speed, scale);
+        this.borntime = borntime;
     }
 
-}
-
-class Enemy extends Car{
-    constructor(image, x, y,name,speed,scale){
-        super()
-		this.dead = false;
-        this.x = x;
-        this.y = y;
-        this.image = new Image();
-        this.image.src = image;
-        this.name = name
-        this.speed = speed
-        this.scale = scale
+    Update() {
+        this.y -= this.speed;
+        if (this.y < -50) {
+            this.dead = true;
+        }
     }
 }
 
-class Civilian extends Car{
-    constructor(image, x, y,name,speed,scale ){
-        super()
-        this.dead = false;
-        this.x = x;
-        this.y = y;
-        this.image = new Image();
-        this.image.src = image;
-        this.name = name
-        this.speed = speed
-        this.scale = scale
-    }
-}
+class Enemy extends Car{}
+
+class Civilian extends Car{}
 
 class Player extends Car{
     constructor(image, x, y,name,speed,scale){
-        super()
-		this.dead = false;
-		this.keyPresses = {};
-        this.keyShoot = true;
-        this.x = x;
-        this.y = y;
-        this.image = new Image();
-        this.image.src = image;
-        this.name = name
-        this.speed = speed
-        this.scale = scale
+        super(image, x, y, name, speed, scale);
+        this.keyPresses = {};
+        this.keyShoot = false;
     }
 
     moveLoop() {  
@@ -157,10 +111,10 @@ class Player extends Car{
     }// moveLoop
 
     moveCharacter(deltaX, deltaY) {
-        if (this.x + deltaX > 0 && this.x + this.image.width*scale + deltaX < canvas.width) {
+        if (this.x + deltaX > 0 && this.x + this.image.width*this.scale + deltaX < canvas.width) {
             this.x += deltaX;
         }
-        if (this.y + deltaY > 0 && this.y + this.image.height*scale + deltaY < canvas.height) {
+        if (this.y + deltaY > 0 && this.y + this.image.height*this.scale + deltaY < canvas.height) {
             this.y += deltaY;
         }
     }
@@ -170,7 +124,8 @@ class Player extends Car{
             return 
         } 
         lastshoot = time
-        bullets.push(new Bulet("images/shoot.png", this.x + 17, this.y-55, "bullet",speed-10,time,2.65))
+        bullets.push(new Bulet("images/shoot.png", this.x + 17, this.y-55, "bullet",speed+10,time,2.65))
+        playSound(shootSound);
     }
     
 }
@@ -180,9 +135,7 @@ class Road
     constructor(image, y) {
         this.x = 0;
         this.y = y;
-        
         this.image = new Image();
-        
         this.image.src = image;
     }
  
@@ -213,40 +166,24 @@ class Road
 //
 //
 //
-// добавить
-let gifOptions = {
-    src: ["images/1_1.png", 
-        "images/1_2.png",
-        "images/1_3.png", 
-        "images/1_4.png",
-        "images/1_5.png", 
-        "images/1_6.png",
-        "images/1_7.png", 
-        "images/1_8.png",
-        "images/1_7.png", 
-        "images/1_6.png",
-        "images/1_5.png",
-        "images/1_4.png",
-        "images/1_3.png",
-        "images/1_2.png",
-        "images/1_1.png"
-    ],
-    frames: 16,
-    numFrame: 0,
-};
-
-let time_bum = [];
-
-const canvas = document.getElementById("canvas"); 
-//Получение холста из DOM
+const canvas = document.getElementById("canvas"); //Получение холста из DOM
 const ctx = canvas.getContext("2d"); 
-
 const scale = 0.7; //Масштаб машин
 const speed = 5; //скорость игорька
+const shootSound = new Audio("sounds/shoot.mp3");
+const explosionSound = new Audio("sounds/explosion.mp3");
+const scoreSound = new Audio("sounds/score.mp3");
+const startSound = new Audio("sounds/start.mp3");
+const gameOverSound = new Audio("sounds/gameover.mp3");
+const gifOptions = {
+    src: ["images/exp1.png", "images/exp2.png", "images/exp3.png", "images/exp4.png", "images/exp5.png","images/exp6.png","images/exp7.png","images/exp8.png"],
+    frame: 0
+};
 let streak = 0.0 // количество убийств
 let score = 0.0; // количество спасённых человек
 let lastshoot = 0; // время последнего выстрела 
 let time = 0; // время игры 
+let timer;
 Resize(); // При загрузке страницы задаётся размер холста
 
 window.addEventListener("resize", Resize); //При изменении размеров окна будут меняться размеры холста
@@ -257,16 +194,8 @@ window.addEventListener("click", Start); //Получение нажатий с 
 let objects = []; //Массив игровых объектов
 let bullets = []; // Массив с пулями
 
-
-let roads = [
-
-    new  Road("images/road.png", 0),
-    new  Road("images/road.png", canvas.height)
-
-]; 
- 
-//Объект, которым управляет игрок
 let player = new  Player("images/player.png", canvas.width / 2, canvas.height / 2, "player",speed ,scale);
+let roads = [new  Road("images/road.png", 0),new  Road("images/road.png", canvas.height)]; 
 
 function Start() {
 	window.removeEventListener("click", Start); //удаление нажатий с клавиатуры 
@@ -274,10 +203,11 @@ function Start() {
 }
 
 function Stop() {
-	window.removeEventListener("click", Start); //удаление нажатий с клавиатуры 
-	window.removeEventListener("keydown", function (e) { KeyDown(e); }, false);
+    window.removeEventListener("keydown", keyDownListener);
+    window.removeEventListener("keyup", keyUpListener);
     objects = []
     clearInterval(timer); //Остановка обновления
+    playSound(gameOverSound);
 }
 
  
@@ -285,42 +215,33 @@ function Update() {
 	time += 1
 	roads[0].Update(roads[1]);
     roads[1].Update(roads[0]);
-	
 	player.moveLoop();
+
 	if(RandomInteger(0, 10000) > 9800) { //создание новых кораблей
-		objects.push(new  Enemy("images/enemy.png", RandomInteger(30, canvas.width - 50), RandomInteger(250, 400) * -1, "enemy",speed+1.5+RandomInteger(0.1,0.4),scale));
+		objects.push(new Enemy("images/enemy.png", RandomInteger(30, canvas.width - 50), RandomInteger(250, 400) * -1, "enemy",speed + 1.5 + RandomInteger(0.1,0.4),scale));
 	}
 	
     if(RandomInteger(0, 10000) > 9990) { //создание новых кораблей
-		objects.push(new  Civilian("images/civilian.png", RandomInteger(30, canvas.width - 50), RandomInteger(250, 400) * -1,"civilian",speed+0.5,scale));
+		objects.push(new Civilian("images/civilian.png", RandomInteger(30, canvas.width - 50), RandomInteger(250, 400) * -1,"civilian",speed + 0.5,scale));
 	}
-
-	for(var i = 0; i < objects.length; i++){
-		objects[i].Update();
-	}
-    for(var i = 0; i < bullets.length; i++){
-		bullets[i].Update();
-	}
+    objects.forEach(obj => obj.Update());
+    bullets.forEach(bullet => bullet.Update());
 
 
-	objects = objects.filter(function (n) {
-      return !n.dead
-    })
-
-    bullets = bullets.filter(function (n) {
-        return !n.dead
-      })
+    objects = objects.filter(n => !n.dead);
+    bullets = bullets.filter(n => !n.dead);
 	
     objects.forEach(obj => {
-        ans = player.Collide(obj);
-        if (ans["hit"]) {
-            if (ans["obj"] == "enemy"){
+        const collision = player.Collide(obj);
+        if (collision.hit) {
+            if (collision.obj === "enemy"){
                 Stop();
-                time_bum.push(setInterval(bum, 50));
+                startExplosion(obj);
                 player.dead = true;
             } else { 
                 score += 1;
                 obj.dead = true;
+                playSound(scoreSound);
             }
         }
         
@@ -328,19 +249,20 @@ function Update() {
             if (time - bullet.borntime > 180 ){
                 bullet.dead = true
             }
-            ans = bullet.Collide(obj);
-            if (ans["hit"]) {
-                if (ans["obj"]=="enemy"){
-                    time_bum.push(setInterval(bum, 50,obj));
+            const bulletCollision = bullet.Collide(obj);
+            if (bulletCollision.hit) {
+                if (bulletCollision.obj == "enemy"){
+                    startExplosion(obj);
                     streak += 1;
+                    playSound(explosionSound);
                 } else{
                     alert("Не стреляй по гражданским");
                 }
                 obj.dead = true;
                 bullet.dead = true;
             }
-        })
-    })
+        });
+    });
 	// for(let i = 0; i < objects.length; i++)
 	// {
         //console.log(objects[i].y,objects[i].name)
@@ -353,24 +275,22 @@ function Update() {
     drawStreak();
 }
 
-function bum(obj) {
-	if (gifOptions.numFrame<gifOptions.src.length) {
-		
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		Draw();
-		let img=new Image();
-		img.src = gifOptions.src[gifOptions.numFrame];
-		img.onload = function() {
-            ctx.drawImage(img, obj.x-img.width/2, obj.y-img.height/2);
-            gifOptions.numFrame++;
-		}
-		
-	} else {
-        clearInterval(time_bum[0]);
-        time_bum.reverse().pop();
-        time_bum.reverse();
-        gifOptions.numFrame = 0; 
-    }
+function startExplosion(obj) {
+    const explosionImages = gifOptions.src.map(src => {
+        const img = new Image();
+        img.src = src;
+        return img;
+    });
+    let frame = 0;
+    const explosionInterval = setInterval(() => {
+        if (frame < explosionImages.length) {
+            ctx.clearRect(obj.x, obj.y, 200, 200);
+            ctx.drawImage(explosionImages[frame], obj.x, obj.y, 200, 200);
+            frame ++;
+        } else {
+            clearInterval(explosionInterval);
+        }
+    }, 50);
 }
 
 function keyDownListener(event) {
@@ -426,30 +346,27 @@ function Draw() //Работа с графикой
 {
     ctx.clearRect(0, 0, canvas.width, canvas.height); //Очистка холста от предыдущего кадра
 	
-	for(var i = 0; i < roads.length; i++)
-    {
+	roads.forEach(road => {
         ctx.drawImage
         (
-            roads[i].image, //Изображение для отрисовки
+            road.image, //Изображение для отрисовки
             0, //Начальное положение по оси X на изображении
             0, //Начальное положение по оси Y на изображении
-            roads[i].image.width, //Ширина изображения
-            roads[i].image.height, //Высота изображения
-            roads[i].x, //Положение по оси X на холсте
-            roads[i].y, //Положение по оси Y на холсте
+            road.image.width, //Ширина изображения
+            road.image.height, //Высота изображения
+            road.x, //Положение по оси X на холсте
+            road.y, //Положение по оси Y на холсте
             canvas.width, //Ширина изображения на холсте
             window.innerHeight //высота
         );
-    }
+    });
 	
 	DrawCar(player);
-	
 	objects.forEach(obj => {DrawCar(obj)}); // отрисовка всех обьектов 
     bullets.forEach(obj => {DrawCar(obj)}); // отрисовка всех пуль 
 }
 
 function DrawCar(car) {  // отрисовка автомобиля
-	let dscale = car.scale // динамический scale
 	ctx.drawImage
 	(
 		car.image, 
@@ -459,15 +376,18 @@ function DrawCar(car) {  // отрисовка автомобиля
 		car.image.height, 
 		car.x, 
 		car.y, 
-		car.image.width * dscale, 
-		car.image.height * dscale 
+		car.image.width * car.scale, 
+		car.image.height * car.scale 
 	);
 }
 
-function RandomInteger(min, max) 
-{
-    let rand = min - 0.5 + Math.random() * (max - min + 1);
-    return Math.round(rand);
+function RandomInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function playSound(sound) {
+    sound.currentTime = 0;
+    sound.play();
 }
 
 function drawScore() {
