@@ -181,6 +181,7 @@ let streak = 0.0 // количество убийств
 let score = 0.0; // количество спасённых человек
 let lastshoot = 0; // время последнего выстрела 
 let time = 0; // время игры 
+let shoptime = 90 * 60;
 let timer;
 Resize(); // При загрузке страницы задаётся размер холста
 
@@ -198,18 +199,28 @@ let roads = [new  Road("images/road.png", 0),new  Road("images/road.png", canvas
 function Start() {
 	window.removeEventListener("click", Start); //удаление нажатий с клавиатуры 
     timer = setInterval(Update, 1000 / 60); //Состояние игры будет обновляться 60 раз в секунду — при такой частоте обновление происходящего будет казаться очень плавным
-    playSound(startSound)
+    playSound(startSound);
+    player.dead = false;
+    score = 0;
+    streak = 0;
+
 }
 
 function Stop() {
-    window.removeEventListener("keydown", keyDownListener);
-    window.removeEventListener("keyup", keyUpListener);
     objects = []
     clearInterval(timer); //Остановка обновления
     playSound(gameOverSound);
+    const rebutton = document.getElementById("rebutton");
+    rebutton.style.zIndex = 0;
+    
 }
 
- 
+function Regame(){
+    const rebutton = document.getElementById("rebutton");
+    rebutton.style.zIndex = -1;
+    Draw0();    
+    window.addEventListener("click", Start); //Получение нажатий с клавиатуры 
+} 
 function Update() {
 	time += 1
 	roads[0].update(roads[1]);
@@ -433,4 +444,4 @@ window.onload = Draw0;
 // // таблица рекордов со сременем жизни NO
 // добавить звуки YES
 // меню NO 
-// после смерти менюшка NO 
+// после смерти менюшка YES
