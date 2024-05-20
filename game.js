@@ -224,7 +224,10 @@ function Stop() {
     playSound(gameOverSound);
     player.dead = true
     const gameOverMenu = document.getElementById("game-over-menu");
+    const resultsmenu = document.getElementById("results")
+    resultsmenu.innerHTML = `Убито : ${streak} Спасено : ${score} неплохо!`
     gameOverMenu.style.display = "block";
+    pause = false
 }
 
 function Regame(){
@@ -239,10 +242,10 @@ function Update() {
     roads[1].update(roads[0]);
 	player.moveLoop();
 
-    // if (time >= shoptime){
-    //     shoptime = time + RandomInteger(90,100) * 60;
-    //     shop(objects)
-    // }
+    if (time >= shoptime){
+        shoptime = time + RandomInteger(90,100) * 60;
+        shop(objects)
+    }
     if (!pause){
         if(RandomInteger(0, 10000) > 9800) { //создание новых кораблей
             objects.push(new Enemy("images/enemy.png", RandomInteger(30, canvas.width - 50), RandomInteger(250, 400) * -1, "enemy",speed + 1.5 + RandomInteger(0.1,0.4),scale));
@@ -427,10 +430,11 @@ function drawStreak() {
     ctx.fillText("Сбито: " + streak, 8, 80);
 }
 
-function shop(objs){
+function shop(){
     objects = []
     objects.push(new CaptureZone(0,0,"images/exp8","capture",1));
     pause = true;
+    
     
 }
 
