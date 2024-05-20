@@ -83,6 +83,16 @@ class Enemy extends GameObject {}
 
 class Civilian extends GameObject {}
 
+class CaptureZone {
+    constructor(x,y,image,name,scale){
+        this.x = x;
+        this.y = y;
+        this.image = new Image();
+        this.image.src = image;
+        this.name = name;   
+        this.scale = scale;     
+    }
+}
 class Player extends GameObject {
     constructor(image, x, y,name,speed,scale){
         super(image, x, y, name, speed, scale);
@@ -181,7 +191,7 @@ let streak = 0.0 // количество убийств
 let score = 0.0; // количество спасённых человек
 let lastshoot = 0; // время последнего выстрела 
 let time = 0; // время игры 
-let shoptime = 90 * 60;
+let shoptime = 10 * 60;
 let timer;
 Resize(); // При загрузке страницы задаётся размер холста
 
@@ -228,8 +238,11 @@ function Update() {
 	player.moveLoop();
 
 	if(RandomInteger(0, 10000) > 9800) { //создание новых кораблей
-		objects.push(new Enemy("images/enemy.png", RandomInteger(30, canvas.width - 50), RandomInteger(250, 400) * -1, "enemy",speed + 1.5 + RandomInteger(0.1,0.4),scale));
-	}
+    if (time >= shoptime){
+        shoptime = time + RandomInteger(90,100) * 60;
+        shop(objects)
+    }
+    if (!pause){
 	
     if(RandomInteger(0, 10000) > 9990) { //создание новых кораблей
 		objects.push(new Civilian("images/civilian.png", RandomInteger(30, canvas.width - 50), RandomInteger(250, 400) * -1,"civilian",speed + 0.5,scale));
