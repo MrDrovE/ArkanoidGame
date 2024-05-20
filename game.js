@@ -93,6 +93,7 @@ class CaptureZone {
         this.scale = scale;     
     }
 }
+
 class Player extends GameObject {
     constructor(image, x, y,name,speed,scale){
         super(image, x, y, name, speed, scale);
@@ -192,6 +193,7 @@ let score = 0.0; // количество спасённых человек
 let lastshoot = 0; // время последнего выстрела 
 let time = 0; // время игры 
 let shoptime = 10 * 60;
+let pause = false; // пауза 
 let timer;
 Resize(); // При загрузке страницы задаётся размер холста
 
@@ -237,22 +239,26 @@ function Update() {
     roads[1].update(roads[0]);
 	player.moveLoop();
 
-	if(RandomInteger(0, 10000) > 9800) { //создание новых кораблей
     if (time >= shoptime){
         shoptime = time + RandomInteger(90,100) * 60;
         shop(objects)
     }
     if (!pause){
+        if(RandomInteger(0, 10000) > 9800) { //создание новых кораблей
+            objects.push(new Enemy("images/enemy.png", RandomInteger(30, canvas.width - 50), RandomInteger(250, 400) * -1, "enemy",speed + 1.5 + RandomInteger(0.1,0.4),scale));
+        }
+        
+        if(RandomInteger(0, 10000) > 9990) { //создание новых кораблей
+            objects.push(new Civilian("images/civilian.png", RandomInteger(30, canvas.width - 50), RandomInteger(250, 400) * -1,"civilian",speed + 0.5,scale));
+        }
+        objects.forEach(obj => obj.update()); // смещение по y имитация движения 
+        bullets.forEach(bullet => bullet.update());
+    
+    
+        objects = objects.filter(n => !n.dead);
+        bullets = bullets.filter(n => !n.dead);
+    }
 	
-    if(RandomInteger(0, 10000) > 9990) { //создание новых кораблей
-		objects.push(new Civilian("images/civilian.png", RandomInteger(30, canvas.width - 50), RandomInteger(250, 400) * -1,"civilian",speed + 0.5,scale));
-	}
-    objects.forEach(obj => obj.update());
-    bullets.forEach(bullet => bullet.update());
-
-
-    objects = objects.filter(n => !n.dead);
-    bullets = bullets.filter(n => !n.dead);
 	
     objects.forEach(obj => {
         const collision = player.collide(obj);
@@ -413,16 +419,24 @@ function playSound(sound) {
 }
 
 function drawScore() {
-    ctx.font = "36px Keleti";
+    ctx.font = "36px segoe print";
     ctx.fillStyle = "#0095DD";
     ctx.fillText("Спасенно: " + score, 8, 40);
 }
 
 function drawStreak() {
-    ctx.font = "36px Keleti";
+    ctx.font = "36px segoe print";
     ctx.fillStyle = "#0095DD";
     ctx.fillText("Сбито: " + streak, 8, 80);
 }
+
+function shop(objs){
+    objects = []
+    objects.push(new CaptureZone(0,0,"images/exp8","capture"));
+    pause = true;
+    
+}
+
 function Draw0() //Кнопка старт
 {
 	//Draw();
