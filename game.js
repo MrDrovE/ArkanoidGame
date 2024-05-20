@@ -225,7 +225,6 @@ function Stop() {
     player.dead = true
     const gameOverMenu = document.getElementById("game-over-menu");
     gameOverMenu.style.display = "block";
-    
 }
 
 function Regame(){
@@ -293,16 +292,8 @@ function Update() {
             }
         });
     });
-	// for(let i = 0; i < objects.length; i++)
-	// {
-        //console.log(objects[i].y,objects[i].name)
-        // for (let b = 0; i<bullets.length;i++){
-        // }
-    // }
 
     Draw();
-    drawScore();
-    drawStreak();
 }
 
 function startExplosion(obj) {
@@ -371,14 +362,14 @@ function keyUpListener(event){
     
 }
 
-function Resize()
-{
+function Resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
 
-function Draw() //Работа с графикой
-{
+function Draw() { //Работа с графикой
+    drawScore();
+    drawStreak();
     ctx.clearRect(0, 0, canvas.width, canvas.height); //Очистка холста от предыдущего кадра
 	
 	roads.forEach(road => {
@@ -472,9 +463,8 @@ window.onload = Draw0;
 // что то сделать чтоб небыло взрыва в воздухе YES
 // анимация многоразовая YES пофиксить баг с set_interval YES
 
-// сделать остновки  NO
+// сделать остновки  YES
 // мб сделать магазинчик NO
 // // таблица рекордов со сременем жизни NO
 // добавить звуки YES
-// меню NO 
 // после смерти менюшка YES
