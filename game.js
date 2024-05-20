@@ -222,16 +222,17 @@ function Stop() {
     objects = []
     clearInterval(timer); //Остановка обновления
     playSound(gameOverSound);
-    const rebutton = document.getElementById("rebutton");
-    rebutton.style.zIndex = 0;
+    player.dead = true
+    const gameOverMenu = document.getElementById("game-over-menu");
+    gameOverMenu.style.display = "block";
     
 }
 
 function Regame(){
-    const rebutton = document.getElementById("rebutton");
-    rebutton.style.zIndex = -1;
+    const gameOverMenu = document.getElementById("game-over-menu");
+    gameOverMenu.style.display = "none";
     Draw0();    
-    window.addEventListener("click", Start); //Получение нажатий с клавиатуры 
+    Start()
 } 
 function Update() {
 	time += 1
@@ -239,10 +240,10 @@ function Update() {
     roads[1].update(roads[0]);
 	player.moveLoop();
 
-    if (time >= shoptime){
-        shoptime = time + RandomInteger(90,100) * 60;
-        shop(objects)
-    }
+    // if (time >= shoptime){
+    //     shoptime = time + RandomInteger(90,100) * 60;
+    //     shop(objects)
+    // }
     if (!pause){
         if(RandomInteger(0, 10000) > 9800) { //создание новых кораблей
             objects.push(new Enemy("images/enemy.png", RandomInteger(30, canvas.width - 50), RandomInteger(250, 400) * -1, "enemy",speed + 1.5 + RandomInteger(0.1,0.4),scale));
@@ -313,8 +314,14 @@ function startExplosion(obj) {
     let frame = 0;
     const explosionInterval = setInterval(() => {
         if (frame < explosionImages.length) {
-            ctx.clearRect(obj.x, obj.y, 200, 200);
-            ctx.drawImage(explosionImages[frame], obj.x, obj.y, 200, 200);
+            ctx.clearRect(obj.x-100, obj.y, 200, 200);
+            ctx.drawImage(
+                explosionImages[frame],
+                obj.x-100,
+                obj.y,
+                200,
+                200
+            );
             frame ++;
         } else {
             clearInterval(explosionInterval);
@@ -395,8 +402,7 @@ function Draw() //Работа с графикой
 }
 
 function DrawCar(car) {  // отрисовка автомобиля
-	ctx.drawImage
-	(
+	ctx.drawImage (
 		car.image, 
 		0, 
 		0, 
@@ -432,7 +438,7 @@ function drawStreak() {
 
 function shop(objs){
     objects = []
-    objects.push(new CaptureZone(0,0,"images/exp8","capture"));
+    objects.push(new CaptureZone(0,0,"images/exp8","capture",1));
     pause = true;
     
 }
