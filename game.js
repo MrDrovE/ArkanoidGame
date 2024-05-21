@@ -475,7 +475,7 @@ function Draw0() //Кнопка старт
 	let start = new Image();
     start.src = "images/start.png";
     start.onload = function() {
-        ctx.drawImage(start, canvas.width*0.2, canvas.height*0.2,canvas.width*0.6,canvas.height*0.6);
+        ctx.drawImage(start, canvas.width*0.25, canvas.height*0.25,canvas.width*0.41,canvas.height*0.49);
 	}
 }
 
