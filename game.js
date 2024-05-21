@@ -175,6 +175,7 @@ class Road {
 //
 //
 //
+//sessionStorage.clear();
 const canvas = document.getElementById("canvas"); //Получение холста из DOM
 const ctx = canvas.getContext("2d"); 
 const scale = 0.7; //Масштаб машин
@@ -222,12 +223,44 @@ function Stop() {
     objects = []
     clearInterval(timer); //Остановка обновления
     playSound(gameOverSound);
-    player.dead = true
+    player.dead = true;
     const gameOverMenu = document.getElementById("game-over-menu");
-    const resultsmenu = document.getElementById("results")
-    resultsmenu.innerHTML = `Убито : ${streak} Спасено : ${score} неплохо!`
+    const resultsmenu = document.getElementById("results");
+    const bestresultsmenu = document.getElementById("best-results");
+    const bestresultstreakmenu = document.getElementById("best-results-streak");
+    const bestresultscoremenu = document.getElementById("best-results-score");
+
+    let newres = "Лучший"
+    let datastreak = sessionStorage.getItem("streak");
+    let datascore = sessionStorage.getItem("score");
+
+    resultsmenu.innerHTML = `Убито : ${streak} Спасено : ${score} неплохо!`; // вывод текущих результатов
+    
+    if (datascore){ 
+        if (datascore < score){
+            sessionStorage.removeItem("score");
+            sessionStorage.setItem("score",score);
+            bestresultscoremenu.innerHTML = `Спасённых : ${datascore}`;
+            newres = "Новый лучший"
+        }
+        if (datastreak < streak){
+            sessionStorage.removeItem("streak");
+            sessionStorage.setItem("streak",streak);
+            bestresultstreakmenu.innerHTML = `Сбитых : ${datastreak}`;
+            newres = "Новый лучший"
+        }
+        bestresultscoremenu.innerHTML = `Сбитых : ${datascore}`; // вывод лучших результатов
+        bestresultstreakmenu.innerHTML = `Спасённых : ${datastreak}`;        
+    } else {
+        sessionStorage.setItem("streak",streak);
+        sessionStorage.setItem("score",score);
+        newres = "Новый лучший"
+        bestresultscoremenu.innerHTML = `Сбитых : ${score}`; // вывод лучших результатов
+        bestresultstreakmenu.innerHTML = `Спасённых : ${streak}`;
+    }
+    bestresultsmenu.innerHTML = ` ${newres} результат`;
     gameOverMenu.style.display = "block";
-    pause = false
+    pause = false;
 }
 
 function Regame(){
@@ -242,10 +275,10 @@ function Update() {
     roads[1].update(roads[0]);
 	player.moveLoop();
 
-    if (time >= shoptime){
-        shoptime = time + RandomInteger(90,100) * 60;
-        shop(objects)
-    }
+    // if (time >= shoptime){
+    //     shoptime = time + RandomInteger(90,100) * 60;
+    //     shop(objects)
+    // }
     if (!pause){
         if(RandomInteger(0, 10000) > 9800) { //создание новых кораблей
             objects.push(new Enemy("images/enemy.png", RandomInteger(30, canvas.width - 50), RandomInteger(250, 400) * -1, "enemy",speed + 1.5 + RandomInteger(0.1,0.4),scale));
@@ -371,9 +404,9 @@ function Resize() {
 }
 
 function Draw() { //Работа с графикой
+    ctx.clearRect(0, 0, canvas.width, canvas.height); //Очистка холста от предыдущего кадра
     drawScore();
     drawStreak();
-    ctx.clearRect(0, 0, canvas.width, canvas.height); //Очистка холста от предыдущего кадра
 	
 	roads.forEach(road => {
         ctx.drawImage
@@ -434,14 +467,11 @@ function shop(){
     objects = []
     objects.push(new CaptureZone(0,0,"images/exp8","capture",1));
     pause = true;
-    
-    
 }
 
 function Draw0() //Кнопка старт
 {
 	//Draw();
-	
 	let start = new Image();
     start.src = "images/start.png";
     start.onload = function() {
